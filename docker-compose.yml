@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  ui:
+    build:
+      context: ./ui
+      dockerfile: dockerfile
+    container_name: ui
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ui:/app
+    environment:
+      PERSON_SERVICE_URL: http://backend:8000
+    depends_on:
+      - backend
+    command: uvicorn text_to_persons_ui:app --host 0.0.0.0 --port 8001 --reload
