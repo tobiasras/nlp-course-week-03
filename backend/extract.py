@@ -5,6 +5,10 @@ from dspy_setup import configure_dspy
 
 _predictor = None
 
+"""
+Returns Predictor
+If predictor not exist create and return it
+"""
 def _get_predictor():
     global _predictor
     if _predictor is None:
@@ -13,6 +17,9 @@ def _get_predictor():
     return _predictor
 
 
+"""
+Prompt for person extraction
+"""
 def _extract_persons_signature():
     class ExtractPersons(dspy.Signature):
         """Extract names of real people mentioned in the text.
@@ -28,9 +35,13 @@ def _extract_persons_signature():
     return ExtractPersons
 
 
+"""
+Exposed method for api endpoint
+"""
 def campusai_extract_persons(text: str) -> List[str]:
     """Extract person names from text via CampusAI using DSPy."""
     result = _get_predictor()(text=text)
+    
     persons = result.persons
     if persons is None:
         return []
